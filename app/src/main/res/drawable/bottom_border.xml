@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:height="3dp" android:gravity="bottom" android:start="2dp" android:end="2dp">
+        <!-- Línea de borde en la parte inferior -->
+        <shape android:shape="rectangle">
+            <solid android:color="#FF0000" /> <!-- Color de la línea de borde -->
+        </shape>
+    </item>
+</layer-list>
