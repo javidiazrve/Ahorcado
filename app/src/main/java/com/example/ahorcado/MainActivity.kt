@@ -3,6 +3,7 @@ package com.example.ahorcado
 import android.icu.lang.UCharacter.toUpperCase
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -20,6 +21,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.text.Normalizer
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -88,13 +90,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         reiniciarComponentes()
         reiniciarBotones()
         cambiarImagen(vidasRestantes)
-        setPalabraEnJuego()
+//        setPalabraEnJuego()
         // la funcion setPalabraEnJuegoConApi() obtiene la palabra que se va a jugar desde una Api,
         // esta pueden traer palabras con tilde lo cual no se maneja aqui en el codigo,
         // sientete libre de intentar de alguna forma manejar esto.
-//        setPalabraEnJuegoConApi()
-        Thread.sleep(3000)
-        mostrarPalabra()
+        setPalabraEnJuegoConApi()
+        Thread.sleep(1000)
     }
 
     private fun reiniciarComponentes() {
@@ -120,6 +121,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 textSize = 25f
                 minWidth = minWidthInDp
                 setPadding(8)
+                gravity = Gravity.CENTER
                 layoutParams = LinearLayout.LayoutParams(
                     0,  // Ancho definido en base al peso
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -137,6 +139,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun setPalabraEnJuego() {
 
         palabraEnJuego = palabras.random();
+        mostrarPalabra()
 
     }
 
@@ -155,12 +158,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
                     var res = response.body?.string();
-                    palabraEnJuego = res.toString().substring(2, res?.length!! - 2)
-                    Log.d("MainActivity", "Response: ${palabraEnJuego}")
+                    var palabra = res.toString().substring(2, res?.length!! - 2)
+                    palabraEnJuego = cleanString(palabra)
+//                    Log.d("MainActivity", "Response: ${palabraEnJuego}")
+                    mostrarPalabra()
                 }
             }
         })
 
+    }
+
+    fun cleanString(texto: String): String {
+        var cadena = Normalizer.normalize(texto, Normalizer.Form.NFD)
+        cadena = cadena.replace("\\p{InCombiningDiacriticalMarks}".toRegex(), "")
+        return cadena
     }
 
     private fun setMyListeners(){
@@ -226,6 +237,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.imgAhorcado.setImageResource(imagenes[vidas]);
 
     }
-
 
 }
