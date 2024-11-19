@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
@@ -23,6 +26,7 @@ import okhttp3.Response
 import java.io.IOException
 import java.text.Normalizer
 
+
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding:ActivityMainBinding;
@@ -33,7 +37,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var vidasRestantes: Int = 7;
     private var ganador: Boolean = false;
     private val client = OkHttpClient()
-
+    private var dialog: AlertDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -85,17 +89,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun iniciarJuego() {
+
         vidasRestantes = 7
         ganador = false
         reiniciarComponentes()
         reiniciarBotones()
         cambiarImagen(vidasRestantes)
-//        setPalabraEnJuego()
+        setPalabraEnJuego()
         // la funcion setPalabraEnJuegoConApi() obtiene la palabra que se va a jugar desde una Api,
         // esta pueden traer palabras con tilde lo cual no se maneja aqui en el codigo,
         // sientete libre de intentar de alguna forma manejar esto.
-        setPalabraEnJuegoConApi()
-        Thread.sleep(1000)
+//        setPalabraEnJuegoConApi()
+        Thread.sleep(2000)
+        mostrarPalabra()
     }
 
     private fun reiniciarComponentes() {
@@ -161,7 +167,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     var palabra = res.toString().substring(2, res?.length!! - 2)
                     palabraEnJuego = cleanString(palabra)
 //                    Log.d("MainActivity", "Response: ${palabraEnJuego}")
-                    mostrarPalabra()
                 }
             }
         })
@@ -237,5 +242,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.imgAhorcado.setImageResource(imagenes[vidas]);
 
     }
+
 
 }
