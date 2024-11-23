@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,15 +27,15 @@ import java.text.Normalizer
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var binding:ActivityMainBinding;
-    private lateinit var palabras: List<String>;
-    private var palabraEnJuego: String = "";
-    private var componentesLetras: ArrayList<TextView> = ArrayList<TextView>();
-    private var botonesLetras: ArrayList<AppCompatButton> = ArrayList<AppCompatButton>();
-    private var vidasRestantes: Int = 7;
-    private var ganador: Boolean = false;
+    private lateinit var binding:ActivityMainBinding
+    private lateinit var palabras: List<String>
+    private var palabraEnJuego: String = ""
+    private var componentesLetras: ArrayList<TextView> = ArrayList<TextView>()
+    private var botonesLetras: ArrayList<AppCompatButton> = ArrayList<AppCompatButton>()
+    private var vidasRestantes: Int = 7
+    private var ganador: Boolean = false
     private val client = OkHttpClient()
-    private var dialog: AlertDialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -59,33 +57,33 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setListButtons() {
-        botonesLetras.add(binding.btA);
-        botonesLetras.add(binding.btB);
-        botonesLetras.add(binding.btC);
-        botonesLetras.add(binding.btD);
-        botonesLetras.add(binding.btE);
-        botonesLetras.add(binding.btF);
-        botonesLetras.add(binding.btG);
-        botonesLetras.add(binding.btH);
-        botonesLetras.add(binding.btI);
-        botonesLetras.add(binding.btJ);
-        botonesLetras.add(binding.btK);
-        botonesLetras.add(binding.btL);
-        botonesLetras.add(binding.btM);
-        botonesLetras.add(binding.btN);
-        botonesLetras.add(binding.btEnye);
-        botonesLetras.add(binding.btO);
-        botonesLetras.add(binding.btP);
-        botonesLetras.add(binding.btQ);
-        botonesLetras.add(binding.btR);
-        botonesLetras.add(binding.btS);
-        botonesLetras.add(binding.btT);
-        botonesLetras.add(binding.btU);
-        botonesLetras.add(binding.btV);
-        botonesLetras.add(binding.btW);
-        botonesLetras.add(binding.btX);
-        botonesLetras.add(binding.btY);
-        botonesLetras.add(binding.btZ);
+        botonesLetras.add(binding.btA)
+        botonesLetras.add(binding.btB)
+        botonesLetras.add(binding.btC)
+        botonesLetras.add(binding.btD)
+        botonesLetras.add(binding.btE)
+        botonesLetras.add(binding.btF)
+        botonesLetras.add(binding.btG)
+        botonesLetras.add(binding.btH)
+        botonesLetras.add(binding.btI)
+        botonesLetras.add(binding.btJ)
+        botonesLetras.add(binding.btK)
+        botonesLetras.add(binding.btL)
+        botonesLetras.add(binding.btM)
+        botonesLetras.add(binding.btN)
+        botonesLetras.add(binding.btEnye)
+        botonesLetras.add(binding.btO)
+        botonesLetras.add(binding.btP)
+        botonesLetras.add(binding.btQ)
+        botonesLetras.add(binding.btR)
+        botonesLetras.add(binding.btS)
+        botonesLetras.add(binding.btT)
+        botonesLetras.add(binding.btU)
+        botonesLetras.add(binding.btV)
+        botonesLetras.add(binding.btW)
+        botonesLetras.add(binding.btX)
+        botonesLetras.add(binding.btY)
+        botonesLetras.add(binding.btZ)
     }
 
     private fun iniciarJuego() {
@@ -95,35 +93,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         reiniciarComponentes()
         reiniciarBotones()
         cambiarImagen(vidasRestantes)
-        setPalabraEnJuego()
+        // setPalabraEnJuego()
         // la funcion setPalabraEnJuegoConApi() obtiene la palabra que se va a jugar desde una Api,
         // esta pueden traer palabras con tilde lo cual no se maneja aqui en el codigo,
         // sientete libre de intentar de alguna forma manejar esto.
-//        setPalabraEnJuegoConApi()
+        setPalabraEnJuegoConApi()
         Thread.sleep(2000)
         mostrarPalabra()
     }
 
     private fun reiniciarComponentes() {
         componentesLetras = ArrayList<TextView>()
-        binding.filaLetras.removeAllViews();
+        binding.filaLetras.removeAllViews()
     }
 
     private fun reiniciarBotones() {
         for (btn in botonesLetras){
-            btn.isEnabled = true;
+            btn.isEnabled = true
         }
     }
 
     private fun mostrarPalabra() {
-        var tamano = palabraEnJuego.length;
+        val tamano = palabraEnJuego.length
 
         val minWidthInDp = (100 * resources.displayMetrics.density).toInt()
 
         for (index in 0..tamano - 1){
 
             val textView = TextView(this).apply {
-                background = getDrawable(R.drawable.bottom_border)
+                background = AppCompatResources.getDrawable(context, R.drawable.bottom_border)
                 textSize = 25f
                 minWidth = minWidthInDp
                 setPadding(8)
@@ -144,8 +142,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setPalabraEnJuego() {
 
-        palabraEnJuego = palabras.random();
-        mostrarPalabra()
+        palabraEnJuego = palabras.random()
 
     }
 
@@ -163,8 +160,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                    var res = response.body?.string();
-                    var palabra = res.toString().substring(2, res?.length!! - 2)
+                    val res = response.body?.string()
+                    val palabra = res.toString().substring(2, res?.length!! - 2)
                     palabraEnJuego = cleanString(palabra)
 //                    Log.d("MainActivity", "Response: ${palabraEnJuego}")
                 }
@@ -182,7 +179,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun setMyListeners(){
 
         for (btn in botonesLetras){
-            btn.setOnClickListener(this);
+            btn.setOnClickListener(this)
         }
         
         binding.btnFlotante.setOnClickListener(this)
@@ -200,20 +197,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun onLetterPress(btn: AppCompatButton) {
 
-        val letra = btn.text[0];
+        val letra = btn.text[0]
 
         val contieneLetra = palabraEnJuego.contains(letra, true)
 
         if(contieneLetra){
-            var tamano = palabraEnJuego.length
+            val tamano = palabraEnJuego.length
 
             for (index in 0..tamano - 1){
                 if(palabraEnJuego[index].equals(letra, true)){
-                    componentesLetras[index].text = toUpperCase(letra.toString());
+                    componentesLetras[index].text = toUpperCase(letra.toString())
                 }
             }
 
-            var counter = 0;
+            var counter = 0
             for (textView in componentesLetras){
                 if(textView.text.toString() != ""){
                     counter++
@@ -221,26 +218,46 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             if(counter == tamano){
-                Toast.makeText(this, "Felicidades, Has Ganado!!!", Toast.LENGTH_LONG).show()
-                ganador = true;
+                ganador = true
             }
 
         }else{
             vidasRestantes--
-
-            cambiarImagen(vidasRestantes)
-
+            if(vidasRestantes == 0){
+                mostrarPalabraCompleta()
+            }
         }
 
-        btn.isEnabled = false;
+        cambiarImagen(vidasRestantes)
+
+        btn.isEnabled = false
+    }
+
+    private fun mostrarPalabraCompleta(){
+        val tamano = palabraEnJuego.length
+
+        var palabraSeparada = palabraEnJuego.trim().split("")
+        palabraSeparada = palabraSeparada.subList(1, tamano + 1)
+
+        for (index in 0..<tamano){
+            componentesLetras[index].text = toUpperCase(palabraSeparada[index])
+        }
     }
 
     private fun cambiarImagen(vidas: Int){
 
-        var imagenes = arrayOf(R.drawable.ultimo_png, R.drawable.septimo_png, R.drawable.sexto_png, R.drawable.quinto_png, R.drawable.cuarto_png, R.drawable.tercero_png, R.drawable.segundo_png, R.drawable.primero_png);
+        binding.imgAhorcado.scaleType = ImageView.ScaleType.FIT_CENTER
+        val imagenes = arrayOf(R.drawable.chill_lose, R.drawable.ultimo, R.drawable.sexto, R.drawable.quinto, R.drawable.cuarto, R.drawable.tercero, R.drawable.segundo, R.drawable.primero)
 
-        binding.imgAhorcado.setImageResource(imagenes[vidas]);
+        if(ganador){
+            binding.imgAhorcado.setImageResource(R.drawable.chill_win)
+        }else{
+            binding.imgAhorcado.setImageResource(imagenes[vidas])
+        }
 
+        if(ganador || vidas == 0){
+            binding.imgAhorcado.scaleType = ImageView.ScaleType.FIT_XY
+        }
     }
 
 

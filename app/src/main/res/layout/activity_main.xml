@@ -446,7 +446,8 @@
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/guidelineTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineTopLabelLetters"
-        android:src="@drawable/primero_png"
+        android:src="@drawable/segundo"
+        android:scaleType="fitCenter"
         android:contentDescription="Imagen local" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
