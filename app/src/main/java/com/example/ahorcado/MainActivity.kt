@@ -1,6 +1,7 @@
 package com.example.ahorcado
 
 import android.icu.lang.UCharacter.toUpperCase
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -30,11 +31,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding:ActivityMainBinding
     private lateinit var palabras: List<String>
     private var palabraEnJuego: String = ""
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var buttonsMediaPlayer: MediaPlayer
     private var componentesLetras: ArrayList<TextView> = ArrayList<TextView>()
     private var botonesLetras: ArrayList<AppCompatButton> = ArrayList<AppCompatButton>()
     private var vidasRestantes: Int = 7
     private var ganador: Boolean = false
     private val client = OkHttpClient()
+    private val audiosList: MutableList<Int> = mutableListOf(R.raw.bruh, R.raw.peo, R.raw.the_rock, R.raw.uy_uy_uy, R.raw.frog_laughing_meme, R.raw.gato_riendo, R.raw.monkey_gaga, R.raw.no_estes_fumando, R.raw.oh_my_god_meme, R.raw.penalti_madrid, R.raw.spongebob_fail)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -52,8 +56,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         setListButtons()
         setMyListeners()
+        initAudioPlayers()
         iniciarJuego()
 
+    }
+
+    private fun initAudioPlayers() {
+        mediaPlayer = MediaPlayer.create(this, R.raw.chill_audio)
+        mediaPlayer.isLooping = true
+
+        buttonsMediaPlayer = MediaPlayer.create(this, audiosList.random())
+        buttonsMediaPlayer.setOnCompletionListener {
+            buttonsMediaPlayer.release()
+        }
     }
 
     private fun setListButtons() {
@@ -92,14 +107,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         ganador = false
         reiniciarComponentes()
         reiniciarBotones()
-        cambiarImagen(vidasRestantes)
-        // setPalabraEnJuego()
+        checkGanador(vidasRestantes)
+        setPalabraEnJuego()
         // la funcion setPalabraEnJuegoConApi() obtiene la palabra que se va a jugar desde una Api,
         // esta pueden traer palabras con tilde lo cual no se maneja aqui en el codigo,
         // sientete libre de intentar de alguna forma manejar esto.
-        setPalabraEnJuegoConApi()
+//        setPalabraEnJuegoConApi()
         Thread.sleep(2000)
         mostrarPalabra()
+        setFailAudiosOrder()
+        detenerAllAudios()
     }
 
     private fun reiniciarComponentes() {
@@ -222,15 +239,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
 
         }else{
+
             vidasRestantes--
             if(vidasRestantes == 0){
                 mostrarPalabraCompleta()
+            }else{
+                reproducirFailAudio(vidasRestantes)
             }
         }
 
-        cambiarImagen(vidasRestantes)
-
         btn.isEnabled = false
+
+        checkGanador(vidasRestantes)
     }
 
     private fun mostrarPalabraCompleta(){
@@ -244,7 +264,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun cambiarImagen(vidas: Int){
+    private fun checkGanador(vidas: Int){
 
         binding.imgAhorcado.scaleType = ImageView.ScaleType.FIT_CENTER
         val imagenes = arrayOf(R.drawable.chill_lose, R.drawable.ultimo, R.drawable.sexto, R.drawable.quinto, R.drawable.cuarto, R.drawable.tercero, R.drawable.segundo, R.drawable.primero)
@@ -256,8 +276,42 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         if(ganador || vidas == 0){
+            detenerAllAudios()
+            reproducirLastAudio()
             binding.imgAhorcado.scaleType = ImageView.ScaleType.FIT_XY
         }
+    }
+
+    private fun setFailAudiosOrder(){
+        audiosList.shuffle()
+    }
+
+    private fun reproducirFailAudio(audioIndex: Int){
+        if(buttonsMediaPlayer.isPlaying){
+            buttonsMediaPlayer.stop()
+            buttonsMediaPlayer.release()
+        }
+
+        buttonsMediaPlayer = MediaPlayer.create(this, audiosList.get(audioIndex))
+        buttonsMediaPlayer.start()
+    }
+
+    private fun reproducirLastAudio(){
+        mediaPlayer.start()
+    }
+
+    private fun detenerAllAudios(){
+
+        if (mediaPlayer.isPlaying){
+            mediaPlayer.stop()
+            mediaPlayer.prepare()
+        }
+
+        if(buttonsMediaPlayer.isPlaying){
+            buttonsMediaPlayer.stop()
+            buttonsMediaPlayer.reset()
+        }
+
     }
 
 
