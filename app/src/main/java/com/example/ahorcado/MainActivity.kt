@@ -1,5 +1,6 @@
 package com.example.ahorcado
 
+import android.content.ContentValues.TAG
 import android.icu.lang.UCharacter.toUpperCase
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var ganador: Boolean = false
     private val client = OkHttpClient()
     private val audiosList: MutableList<Int> = mutableListOf(R.raw.bruh, R.raw.peo, R.raw.the_rock, R.raw.uy_uy_uy, R.raw.frog_laughing_meme, R.raw.gato_riendo, R.raw.monkey_gaga, R.raw.no_estes_fumando, R.raw.oh_my_god_meme, R.raw.penalti_madrid, R.raw.spongebob_fail)
+    private lateinit var repo: Repositorio
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        repo = Repositorio()
+        repo.init()
 
         palabras = arrayOf("tomar", "andadera", "puerta", "relojeria", "deporte", "amar", "holograma", "programa").toList()
 
@@ -108,15 +112,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         reiniciarComponentes()
         reiniciarBotones()
         checkGanador(vidasRestantes)
-        setPalabraEnJuego()
         // la funcion setPalabraEnJuegoConApi() obtiene la palabra que se va a jugar desde una Api,
         // esta pueden traer palabras con tilde lo cual no se maneja aqui en el codigo,
         // sientete libre de intentar de alguna forma manejar esto.
 //        setPalabraEnJuegoConApi()
-        Thread.sleep(2000)
-        mostrarPalabra()
-        setFailAudiosOrder()
-        detenerAllAudios()
+//        setPalabraEnJuego()
+//        Thread.sleep(2000)
+//        mostrarPalabra()
+//        setFailAudiosOrder()
+//        detenerAllAudios()
+
+        setPalabraEnJuegoFirebase()
     }
 
     private fun reiniciarComponentes() {
@@ -185,6 +191,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
+    }
+
+    private fun setPalabraEnJuegoFirebase() {
+        repo.getPalabraRandom().addOnSuccessListener { result ->
+
+            palabraEnJuego = result.documents.random().get("palabra").toString()
+            mostrarPalabra()
+            setFailAudiosOrder()
+            detenerAllAudios()
+
+        }
     }
 
     fun cleanString(texto: String): String {

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "902414420096",
+    "project_id": "ahorcado-3d46a",
+    "storage_bucket": "ahorcado-3d46a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902414420096:android:4dba85cc36ad46f6637e65",
+        "android_client_info": {
+          "package_name": "com.example.ahorcado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuOtH_cBSsMKESxbXKgE6R3FwWpDQ5csU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
