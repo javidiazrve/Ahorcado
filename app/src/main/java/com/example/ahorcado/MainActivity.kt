@@ -53,16 +53,78 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        repo = Repositorio()
-        repo.init()
-
-        palabras = arrayOf("tomar", "andadera", "puerta", "relojeria", "deporte", "amar", "holograma", "programa").toList()
-
         setListButtons()
         setMyListeners()
         initAudioPlayers()
-        iniciarJuego()
+        repo = Repositorio()
+        repo.init()
 
+        Log.d("SavedInstanceState", (savedInstanceState != null).toString())
+
+        if(savedInstanceState != null){
+            with(savedInstanceState){
+                palabraEnJuego = getString("palabraEnJuego").toString()
+                vidasRestantes = getInt("vidasRestantes")
+                ganador = getBoolean("ganador")
+
+                for ((index, isEnable) in getBooleanArray("estadoBotones")!!.withIndex()){
+                    botonesLetras[index].isEnabled = isEnable
+                }
+
+                mostrarPalabra()
+
+                for ((index, letra) in getStringArray("componentesLetras")!!.withIndex()){
+                    componentesLetras[index].text = letra
+                }
+
+                if(getBoolean("isPlayinLastAudio")){
+                    mediaPlayer.start()
+                    detenerAllAudios()
+                }
+
+                checkGanador(vidasRestantes)
+
+            }
+        }else{
+            palabras = arrayOf("tomar", "andadera", "puerta", "relojeria", "deporte", "amar", "holograma", "programa").toList()
+            iniciarJuego()
+        }
+
+        Log.d("CREATE", palabraEnJuego)
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("palabraEnJuego", palabraEnJuego)
+        outState.putInt("vidasRestantes", vidasRestantes)
+        outState.putBoolean("ganador", ganador)
+
+        val btns: MutableList<Boolean> = mutableListOf()
+
+        for (btn in botonesLetras){
+            btns.add(btn.isEnabled)
+        }
+
+        outState.putBooleanArray("estadoBotones", btns.toBooleanArray())
+
+        val letras: MutableList<String> = mutableListOf()
+
+        for (letra in componentesLetras){
+            letras.add(letra.text.toString())
+        }
+
+        outState.putStringArray("componentesLetras",letras.toTypedArray())
+
+        Log.d("SAVE", palabraEnJuego)
+
+        outState.putBoolean("isPlayingLastAudio", mediaPlayer.isPlaying)
+
+        detenerAllAudios()
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
     }
 
     private fun initAudioPlayers() {
@@ -105,11 +167,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         botonesLetras.add(binding.btZ)
     }
 
+    private fun reiniciarJuego(){
+        iniciarJuego()
+    }
+
     private fun iniciarJuego() {
 
         vidasRestantes = 7
         ganador = false
-        reiniciarComponentes()
         reiniciarBotones()
         checkGanador(vidasRestantes)
         // la funcion setPalabraEnJuegoConApi() obtiene la palabra que se va a jugar desde una Api,
@@ -119,10 +184,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 //        setPalabraEnJuego()
 //        Thread.sleep(2000)
 //        mostrarPalabra()
-//        setFailAudiosOrder()
-//        detenerAllAudios()
+        setFailAudiosOrder()
+        detenerAllAudios()
+        setPalabraEnJuegoFirebase() // aqui hace todo lo que esta abajo
 
-        setPalabraEnJuegoFirebase()
     }
 
     private fun reiniciarComponentes() {
@@ -137,6 +202,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun mostrarPalabra() {
+
+        reiniciarComponentes()
+
+        Log.d("MostrarPalabra", palabraEnJuego)
+
         val tamano = palabraEnJuego.length
 
         val minWidthInDp = (100 * resources.displayMetrics.density).toInt()
@@ -194,6 +264,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setPalabraEnJuegoFirebase() {
+
         repo.getPalabraRandom().addOnSuccessListener { result ->
 
             palabraEnJuego = result.documents.random().get("palabra").toString()
@@ -223,7 +294,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(btn: View?) {
 
         when(btn){
-            binding.btnFlotante -> iniciarJuego()
+            binding.btnFlotante -> reiniciarJuego()
             else -> if (vidasRestantes != 0 && !ganador) onLetterPress(btn as AppCompatButton) else return
         }
 
@@ -322,12 +393,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         if (mediaPlayer.isPlaying){
             mediaPlayer.stop()
             mediaPlayer.prepare()
+            Log.d("AUDIO", "PARAR AUDIO")
         }
 
         if(buttonsMediaPlayer.isPlaying){
             buttonsMediaPlayer.stop()
             buttonsMediaPlayer.reset()
+            Log.d("AUDIO", "PARAR AUDIO BOTONES")
         }
+
+        Log.d("AUDIO", "Salir Audio")
 
     }
 
