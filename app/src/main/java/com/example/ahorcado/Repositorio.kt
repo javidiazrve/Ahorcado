@@ -22,13 +22,6 @@ class Repositorio() {
 
         return db.collection("palabras")
             .get()
-
-//        for (document in result) {
-//            Log.d(TAG, "${document.id} => ${document.data.get("palabra")}")
-//            palabras.add(document.data.get("palabra").toString())
-//        }
-//
-//        return result
     }
 
 

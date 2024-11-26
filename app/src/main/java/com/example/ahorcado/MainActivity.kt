@@ -1,5 +1,6 @@
 package com.example.ahorcado
 
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.icu.lang.UCharacter.toUpperCase
 import android.media.MediaPlayer
@@ -9,6 +10,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -265,12 +267,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setPalabraEnJuegoFirebase() {
 
+        var progress = ProgressDialog(this)
+        progress.setCancelable(false)
+        progress.setMessage("Cargando Palabra...")
+        progress.show()
+
         repo.getPalabraRandom().addOnSuccessListener { result ->
 
             palabraEnJuego = result.documents.random().get("palabra").toString()
             mostrarPalabra()
             setFailAudiosOrder()
             detenerAllAudios()
+            progress.dismiss()
 
         }
     }
