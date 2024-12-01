@@ -472,7 +472,6 @@
             android:elevation="20dp"
             tools:ignore="MissingConstraints" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -487,8 +486,6 @@
         app:layout_constraintStart_toEndOf="@id/guidelineVStartLetters"
         app:layout_constraintEnd_toStartOf="@id/guidelineV6Letters"
         tools:ignore="MissingConstraints">
-
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
